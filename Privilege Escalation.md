@@ -273,7 +273,8 @@ Note: Elevated/Administrative privileges are required in order to access and int
 	- All characters are then converted into uppercase.
 	- Each chunk is then hashed separately with the DES algorithm.
 - LM hashing is generally considered to be a weak protocol and can easily be cracked, primarily because the password hash does not include salts, consequently making brute-force and rainbow table attacks effective against LM hashes.!
-![[Screenshot 2025-06-11 114521.png]]
+
+![Screenshot of SAM database explanation](Screenshot%202025-06-11%20114521.png)
 
 #### NTLM (NTHash)
 - NTLM is a collection of authentication protocols that are utilized in Windows to facilitate authentication between computers. The authentication process involves using a valid username and password to authenticate successfully.
@@ -283,7 +284,7 @@ Note: Elevated/Administrative privileges are required in order to access and int
 	- Does not split the hash in to two chunks.
 	- Case sensitive.
 	- Allows the use of symbols and unicode characters.
-![[Screenshot 2025-06-11 114716.png]]
+![Screenshot](Screenshot%202025-06-11%20114716.png)
 ### **5-Searching For Passwords In Windows Configuration Files**
 - Windows can automate a variety of repetitive tasks, such as the mass rollout or installation of Windows on many systems.
 - This is typically done through the use of the Unattended Windows Setup utility, which is used to automate the mass installation/deployment of Windows on systems.
