@@ -90,8 +90,6 @@ netstat -ano
 ```
 Windows Firewall state
 ```powershell
-Windows Firewall state
-#or
 netsh advfirewall firewall show
 #or
 netsh advfirewall firewall show rule
