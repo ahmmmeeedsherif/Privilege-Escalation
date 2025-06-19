@@ -284,7 +284,7 @@ Note: Elevated/Administrative privileges are required in order to access and int
 	- Does not split the hash in to two chunks.
 	- Case sensitive.
 	- Allows the use of symbols and unicode characters.
-![[Screenshot 2025-06-11 114716.png]]
+<img src="https://github.com/ahmmmeeedsherif/Privilege-Escalation/blob/main/Screenshot%202025-06-11%20114716.png"/>
 ### **5-Searching For Passwords In Windows Configuration Files**
 - Windows can automate a variety of repetitive tasks, such as the mass rollout or installation of Windows on many systems.
 - This is typically done through the use of the Unattended Windows Setup utility, which is used to automate the mass installation/deployment of Windows on systems.
